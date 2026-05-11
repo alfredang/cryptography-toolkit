@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Cryptography Toolkit</title>
+<link rel="stylesheet" href="style.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsencrypt@3.3.2/bin/jsencrypt.min.js"></script>
+</head>
+<body>
+<header>
+  <div class="container header-bar">
+    <h1>Cryptography Toolkit</h1>
+    <button id="themeToggle" class="theme-btn" aria-label="Toggle theme">
+      <span id="themeIcon">☀️</span>
+    </button>
+  </div>
+</header>
+
+<main class="container">
+  <nav class="tabs" role="tablist">
+    <button class="tab active" data-tab="aes">AES</button>
+    <button class="tab" data-tab="des">DES</button>
+    <button class="tab" data-tab="tdes">Triple DES</button>
+    <button class="tab" data-tab="rc4">RC4</button>
+    <button class="tab" data-tab="rsa">RSA</button>
+    <button class="tab" data-tab="ecdsa">ECDSA</button>
+  </nav>
+
+  <!-- AES -->
+  <section class="panel active" id="panel-aes">
+    <h2>AES Encryption / Decryption</h2>
+    <p class="hint">Symmetric block cipher. Use a strong passphrase or key.</p>
+    <label>Mode
+      <select id="aes-mode">
+        <option value="CBC">CBC</option>
+        <option value="ECB">ECB</option>
+        <option value="CFB">CFB</option>
+        <option value="OFB">OFB</option>
+        <option value="CTR">CTR</option>
+      </select>
+    </label>
+    <label>Key Size
+      <select id="aes-keysize">
+        <option value="128">128</option>
+        <option value="192">192</option>
+        <option value="256" selected>256</option>
+      </select>
+    </label>
+    <label>Passphrase / Key
+      <input type="text" id="aes-key" placeholder="Enter secret key" />
+    </label>
+    <label>Input
+      <textarea id="aes-input" rows="5" placeholder="Plaintext or Base64 ciphertext"></textarea>
+    </label>
+    <div class="actions">
+      <button class="btn primary" onclick="aesEncrypt()">Encrypt</button>
+      <button class="btn" onclick="aesDecrypt()">Decrypt</button>
+      <button class="btn ghost" onclick="copyOutput('aes-output')">Copy</button>
+      <button class="btn ghost" onclick="clearFields(['aes-input','aes-output'])">Clear</button>
+    </div>
+    <label>Output
+      <textarea id="aes-output" rows="5" readonly></textarea>
+    </label>
+  </section>
+
+  <!-- DES -->
+  <section class="panel" id="panel-des">
+    <h2>DES Encryption / Decryption</h2>
+    <p class="hint warn">⚠️ DES is considered insecure. For educational use only.</p>
+    <label>Mode
+      <select id="des-mode">
+        <option value="CBC">CBC</option>
+        <option value="ECB">ECB</option>
+        <option value="CFB">CFB</option>
+        <option value="OFB">OFB</option>
+      </select>
+    </label>
+    <label>Passphrase / Key
+      <input type="text" id="des-key" placeholder="Enter secret key" />
+    </label>
+    <label>Input
+      <textarea id="des-input" rows="5"></textarea>
+    </label>
+    <div class="actions">
+      <button class="btn primary" onclick="desEncrypt()">Encrypt</button>
+      <button class="btn" onclick="desDecrypt()">Decrypt</button>
+      <button class="btn ghost" onclick="copyOutput('des-output')">Copy</button>
+      <button class="btn ghost" onclick="clearFields(['des-input','des-output'])">Clear</button>
+    </div>
+    <label>Output
+      <textarea id="des-output" rows="5" readonly></textarea>
+    </label>
+  </section>
+
+  <!-- Triple DES -->
+  <section class="panel" id="panel-tdes">
+    <h2>Triple DES Encryption / Decryption</h2>
+    <p class="hint">3DES applies the DES cipher three times to each block.</p>
+    <label>Mode
+      <select id="tdes-mode">
+        <option value="CBC">CBC</option>
+        <option value="ECB">ECB</option>
+        <option value="CFB">CFB</option>
+        <option value="OFB">OFB</option>
+      </select>
+    </label>
+    <label>Passphrase / Key
+      <input type="text" id="tdes-key" placeholder="Enter secret key" />
+    </label>
+    <label>Input
+      <textarea id="tdes-input" rows="5"></textarea>
+    </label>
+    <div class="actions">
+      <button class="btn primary" onclick="tdesEncrypt()">Encrypt</button>
+      <button class="btn" onclick="tdesDecrypt()">Decrypt</button>
+      <button class="btn ghost" onclick="copyOutput('tdes-output')">Copy</button>
+      <button class="btn ghost" onclick="clearFields(['tdes-input','tdes-output'])">Clear</button>
+    </div>
+    <label>Output
+      <textarea id="tdes-output" rows="5" readonly></textarea>
+    </label>
+  </section>
+
+  <!-- RC4 -->
+  <section class="panel" id="panel-rc4">
+    <h2>RC4 Encryption / Decryption</h2>
+    <p class="hint warn">⚠️ RC4 is considered insecure. For educational use only.</p>
+    <label>Passphrase / Key
+      <input type="text" id="rc4-key" placeholder="Enter secret key" />
+    </label>
+    <label>Input
+      <textarea id="rc4-input" rows="5"></textarea>
+    </label>
+    <div class="actions">
+      <button class="btn primary" onclick="rc4Encrypt()">Encrypt</button>
+      <button class="btn" onclick="rc4Decrypt()">Decrypt</button>
+      <button class="btn ghost" onclick="copyOutput('rc4-output')">Copy</button>
+      <button class="btn ghost" onclick="clearFields(['rc4-input','rc4-output'])">Clear</button>
+    </div>
+    <label>Output
+      <textarea id="rc4-output" rows="5" readonly></textarea>
+    </label>
+  </section>
+
+  <!-- RSA -->
+  <section class="panel" id="panel-rsa">
+    <h2>RSA Encryption / Decryption</h2>
+    <p class="hint">Asymmetric cipher. Encrypt with public key, decrypt with private key.</p>
+    <div class="row">
+      <label>Key Size
+        <select id="rsa-keysize">
+          <option value="1024">1024</option>
+          <option value="2048" selected>2048</option>
+          <option value="4096">4096</option>
+        </select>
+      </label>
+      <button class="btn" onclick="rsaGenerate()">Generate Key Pair</button>
+    </div>
+    <label>Public Key
+      <textarea id="rsa-pub" rows="6" placeholder="-----BEGIN PUBLIC KEY-----"></textarea>
+    </label>
+    <label>Private Key
+      <textarea id="rsa-priv" rows="6" placeholder="-----BEGIN RSA PRIVATE KEY-----"></textarea>
+    </label>
+    <label>Input
+      <textarea id="rsa-input" rows="4"></textarea>
+    </label>
+    <div class="actions">
+      <button class="btn primary" onclick="rsaEncrypt()">Encrypt (Public)</button>
+      <button class="btn" onclick="rsaDecrypt()">Decrypt (Private)</button>
+      <button class="btn ghost" onclick="copyOutput('rsa-output')">Copy</button>
+      <button class="btn ghost" onclick="clearFields(['rsa-input','rsa-output'])">Clear</button>
+    </div>
+    <label>Output
+      <textarea id="rsa-output" rows="4" readonly></textarea>
+    </label>
+  </section>
+
+  <!-- ECDSA -->
+  <section class="panel" id="panel-ecdsa">
+    <h2>ECDSA Sign / Verify</h2>
+    <p class="hint">ECDSA is a signature algorithm — sign messages with a private key, verify with a public key.</p>
+    <div class="row">
+      <label>Curve
+        <select id="ecdsa-curve">
+          <option value="P-256" selected>P-256</option>
+          <option value="P-384">P-384</option>
+          <option value="P-521">P-521</option>
+        </select>
+      </label>
+      <button class="btn" onclick="ecdsaGenerate()">Generate Key Pair</button>
+    </div>
+    <label>Public Key (JWK JSON)
+      <textarea id="ecdsa-pub" rows="5"></textarea>
+    </label>
+    <label>Private Key (JWK JSON)
+      <textarea id="ecdsa-priv" rows="5"></textarea>
+    </label>
+    <label>Message
+      <textarea id="ecdsa-input" rows="4"></textarea>
+    </label>
+    <label>Signature (Base64)
+      <textarea id="ecdsa-sig" rows="3"></textarea>
+    </label>
+    <div class="actions">
+      <button class="btn primary" onclick="ecdsaSign()">Sign</button>
+      <button class="btn" onclick="ecdsaVerify()">Verify</button>
+      <button class="btn ghost" onclick="clearFields(['ecdsa-input','ecdsa-sig','ecdsa-output'])">Clear</button>
+    </div>
+    <label>Result
+      <textarea id="ecdsa-output" rows="2" readonly></textarea>
+    </label>
+  </section>
+</main>
+
+<footer>
+  <div class="container">
+    Powered by <a href="https://www.tertiarycourses.com.sg/" target="_blank" rel="noopener">Tertiary Infotech Academy Pte Ltd</a>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
